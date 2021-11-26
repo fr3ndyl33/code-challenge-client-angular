@@ -1,8 +1,8 @@
 # Pragmateam code challenge client (Angular)
 
 ##To run this project
-1. make sure to checkout and download the backend at https://github.com/fr3ndyl33/code-challenge-server-nodejs. Run the test first using npm test (to make sure everything is working)then, run the node server using npm start
-2. make sure to checkout and download the frontend at https://github.com/fr3ndyl33/code-challenge-client-angular. Run the test first using npm test (to make sure everything is green)then, run the local web using npm start
+1. make sure to checkout and download the backend at https://github.com/fr3ndyl33/code-challenge-server-nodejs. Run the test first using `npm test` (to make sure everything is working)then, run the node server using `npm start`
+2. make sure to checkout and download the frontend at https://github.com/fr3ndyl33/code-challenge-client-angular. Run the test first using `npm test` (to make sure everything is green)then, run the local web using `npm start`
 3. make sure to run and serve the backend first.
 
 ##Frontend Improvement (Angular)
