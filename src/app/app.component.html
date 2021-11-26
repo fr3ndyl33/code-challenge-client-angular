@@ -1,22 +1,18 @@
 <div class="App">
-  <h2>Beers</h2>
-  <table>
+  <h2 class='test-title'>Beers</h2>
+  <table class='test-table'>
     <thead>
     <tr>
-      <th align="left">Product</th>
-      <th align="left">Temperature</th>
-      <th align="left">Status</th>
+      <th>Product</th>
+      <th>Temperature</th>
+      <th>Status</th>
     </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of data | keyvalue">
-        <td width="150">{{ $any(item.value).name }}</td>
-        <td width="150">{{ $any(item.value).temperature }}</td>
-        <td width="150">
-          <span *ngIf="$any(item.value).temperature < $any(item.value).minimumTemperature">too low</span>
-          <span *ngIf="$any(item.value).temperature > $any(item.value).maximumTemperature">too high</span>
-          <span *ngIf="$any(item.value).temperature <= $any(item.value).maximumTemperature && $any(item.value).temperature >= $any(item.value).minimumTemperature">all good</span>
-        </td>
+      <tr *ngFor="let item of productsTemperature">
+        <td class='test-table-name'>{{ item.name }}</td>
+        <td class='test-table-temperature' style='text-align: center'>{{ item.temperature }}</td>
+        <td class='test-table-status'>{{ showStatus(item) }}</td>
       </tr>
     </tbody>
   </table>

@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {tap} from 'rxjs/operators';
+import { TemperatureService } from './services/temperature.service';
+import { ProductTemperatureModel } from './model/product-temperature.model';
 
 @Component({
   selector: 'app-root',
@@ -10,69 +11,38 @@ import {tap} from 'rxjs/operators';
 export class AppComponent implements OnInit {
   title = 'code-challenge';
 
-  private readonly products = [
-    {
-      id: '1',
-      name: 'Pilsner',
-      minimumTemperature: 4,
-      maximumTemperature: 6,
-    },
-    {
-      id: '2',
-      name: 'IPA',
-      minimumTemperature: 5,
-      maximumTemperature: 6,
-    },
-    {
-      id: '3',
-      name: 'Lager',
-      minimumTemperature: 4,
-      maximumTemperature: 7,
-    },
-    {
-      id: '4',
-      name: 'Stout',
-      minimumTemperature: 6,
-      maximumTemperature: 8,
-    },
-    {
-      id: '5',
-      name: 'Wheat beer',
-      minimumTemperature: 3,
-      maximumTemperature: 5,
-    },
-    {
-      id: '6',
-      name: 'Pale Ale',
-      minimumTemperature: 4,
-      maximumTemperature: 6,
-    },
-  ];
+  productsTemperature: ProductTemperatureModel[] = [];
+  data: any = {};
 
-  readonly data: any = {};
-
-  constructor(private httpClient: HttpClient) {
+  constructor(
+    private httpClient: HttpClient,
+    private tempService: TemperatureService
+  ) {
   }
 
   ngOnInit(): void {
-    const loadData = () => {
-      this.products.forEach((product) => {
-        this.httpClient.get(`http://localhost:8081/temperature/${product.id}`)
-          .pipe(
-            tap(response => {
-              this.data[product.id] = {
-                ...product,
-                ...response
-              };
-            })
-          ).subscribe();
-      });
-    };
-
-    loadData();
+    this.loadData();
 
     setInterval(() => {
-      loadData();
+      this.loadData();
     }, 5000);
+  }
+
+  async loadData(): Promise<void> {
+    await this.tempService.getProductsTemperature().toPromise().then(async res => {
+      await res.forEach(product => {
+        const index = this.productsTemperature.map((e) => e.id).indexOf(product.id);
+        if (index === -1) {
+          this.productsTemperature.push(product);
+        } else {
+          this.productsTemperature[index] = Object.assign({}, product);
+        }
+      });
+    });
+  }
+
+  showStatus(product: ProductTemperatureModel): string {
+    product.status = this.tempService.showProductTemperatureStatus(product);
+    return product.status;
   }
 }
