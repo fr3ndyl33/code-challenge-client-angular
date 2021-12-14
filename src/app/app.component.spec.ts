@@ -5,13 +5,16 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { TemperatureService } from './services/temperature.service';
 import { of } from 'rxjs';
-import { delay } from 'rxjs/operators';
 import { ProductTemperatureModel } from './model/product-temperature.model';
+import arrayContaining = jasmine.arrayContaining;
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<any>;
   let app: any;
   let temperatureService: TemperatureService;
+  let mockTemperatureService: any;
+  let spyTemperatureService: jasmine.Spy;
+  let spyComponentLoadData: jasmine.Spy;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -31,6 +34,13 @@ describe('AppComponent', () => {
     fixture = TestBed.createComponent(AppComponent);
     app = fixture.componentInstance;
     temperatureService = TestBed.inject(TemperatureService);
+    mockTemperatureService = fixture.debugElement.injector.get(TemperatureService);
+    spyComponentLoadData = spyOn(app, 'loadData');
+    spyTemperatureService = spyOn(temperatureService, 'getProductsTemperature')
+      .and.returnValue(of([
+        new ProductTemperatureModel('1', 'Product 1', 1, 3, 2, ''),
+        new ProductTemperatureModel('1', 'Product 2', 4, 5, 6, ''),
+      ]));
   });
 
   it('should create the app', () => {
@@ -44,21 +54,43 @@ describe('AppComponent', () => {
   });
 
   describe('#loadData', () => {
-    beforeEach(() => {
-      spyOn(app, 'loadData');
-    });
     it('should be defined', () => {
       expect(app.loadData).toBeTruthy();
     });
     it('should be called once on component Init', () => {
       app.ngOnInit();
-      expect(app.loadData).toHaveBeenCalled();
+      expect(spyComponentLoadData).toHaveBeenCalled();
     });
     it('should be called once every 5000ms on component Init', fakeAsync((): void => {
       app.ngOnInit();
       tick(5000);
-      expect(app.loadData).toHaveBeenCalled();
+      expect(spyComponentLoadData).toHaveBeenCalled();
       discardPeriodicTasks();
+    }));
+    it('should call getProductsTemperature from TemperatureService', fakeAsync((): void => {
+      fixture = TestBed.createComponent(AppComponent);
+      app = fixture.componentInstance;
+      app.loadData();
+      tick(5000);
+      expect(spyTemperatureService).toHaveBeenCalled();
+      discardPeriodicTasks();
+    }));
+    it('should call getProductsTemperature and return data', fakeAsync((): void => {
+      fixture = TestBed.createComponent(AppComponent);
+      app = fixture.componentInstance;
+      app.loadData();
+      tick(5000);
+      expect(app.productsTemperature.length).toBeGreaterThanOrEqual(1);
+      expect(app.productsTemperature).toEqual([
+          jasmine.objectContaining({
+            id: jasmine.any(String),
+            name: jasmine.any(String),
+            minimumTemperature: jasmine.any(Number),
+            maximumTemperature: jasmine.any(Number),
+            temperature: jasmine.any(Number),
+          })
+        ]
+      );
     }));
   });
 

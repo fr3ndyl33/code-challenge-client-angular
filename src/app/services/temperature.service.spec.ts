@@ -27,25 +27,27 @@ describe('TemperatureService', () => {
     });
     it('should return expected result in json array following product-temperature model', () => {
       const limit = 1;
-      service.getProductsTemperature(limit).toPromise().then(result => {
-        console.log(result);
-        result.forEach(temperature => {
-          expect(temperature.id).toBeInstanceOf(String);
-          expect(temperature.id).toBeTruthy();
-          expect(temperature.name).toBeInstanceOf(String);
-          expect(temperature.name).toBeTruthy();
-          expect(temperature.minimumTemperature).toBeInstanceOf(Number);
-          expect(temperature.minimumTemperature).toBeTruthy();
-          expect(temperature.maximumTemperature).toBeInstanceOf(Number);
-          expect(temperature.maximumTemperature).toBeTruthy();
-          expect(temperature.temperature).toBeInstanceOf(Number);
-          expect(temperature.temperature).toBeTruthy();
-        });
+      const mockResponse = [{
+        id: '1',
+        name: 'Product 1',
+        minimumTemperature: 1,
+        maximumTemperature: 6,
+        temperature: 5,
+      }];
+      service.getProductsTemperature(limit).subscribe(result => {
+        expect(result).toBeDefined();
+        expect(result.length).toBe(1);
+        const temperature = result[0];
+        expect(temperature.id).toBeInstanceOf(String);
+        expect(temperature.name).toBeInstanceOf(String);
+        expect(temperature.minimumTemperature).toBeInstanceOf(Number);
+        expect(temperature.maximumTemperature).toBeInstanceOf(Number);
+        expect(temperature.temperature).toBeInstanceOf(Number);
       });
 
       const req = httpMock.expectOne(`${service.API_URL}/temperature?limit=` + limit);
       expect(req.request.method).toBe('GET');
-      req.flush(limit);
+      req.flush(mockResponse);
 
       httpMock.verify();
     });
@@ -60,6 +62,13 @@ describe('TemperatureService', () => {
     });
     it('should return expected result for given product id', () => {
       const productId = '1';
+      const mockResponse = {
+        id: '1',
+        name: 'Product 1',
+        minimumTemperature: 1,
+        maximumTemperature: 6,
+        temperature: 5,
+      };
       service.getTempByProductId(productId)?.toPromise().then(temp => {
         const temperature = temp;
         expect(temperature.id.toString()).toEqual(productId);
@@ -68,7 +77,7 @@ describe('TemperatureService', () => {
 
       const req = httpMock.expectOne(`${service.API_URL}/temperature/${productId}`);
       expect(req.request.method).toBe('GET');
-      req.flush(productId);
+      req.flush(mockResponse);
 
       httpMock.verify();
     });

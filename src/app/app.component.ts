@@ -38,6 +38,7 @@ export class AppComponent implements OnInit {
           this.productsTemperature[index] = Object.assign({}, product);
         }
       });
+      Promise.resolve();
     });
   }
 
