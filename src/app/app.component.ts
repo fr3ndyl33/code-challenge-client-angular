@@ -28,6 +28,10 @@ export class AppComponent implements OnInit {
     }, 5000);
   }
 
+  /**
+   * Load data from API and update productsTemperature
+   * @return Promise<void>
+   */
   async loadData(): Promise<void> {
     await this.tempService.getProductsTemperature().toPromise().then(async res => {
       await res.forEach(product => {
@@ -42,6 +46,11 @@ export class AppComponent implements OnInit {
     });
   }
 
+  /**
+   * Get temperature string from product's min and max temperature
+   * @param product ProductTemperatureModel
+   * @return Promise<void>
+   */
   showStatus(product: ProductTemperatureModel): string {
     product.status = this.tempService.showProductTemperatureStatus(product);
     return product.status;

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { ProductModel } from '../model/product.model';
 import { ProductTemperatureModel } from '../model/product-temperature.model';
 
 @Injectable({
@@ -14,6 +13,11 @@ export class TemperatureService {
     private httpClient: HttpClient
   ) { }
 
+  /**
+   * Get all products with its current temperature
+   * @param limit - number of products to return
+   * @returns Observable<any>
+   */
   getProductsTemperature(limit?: number): Observable<any> {
     if (limit === undefined) {
       limit = 20;
@@ -21,6 +25,11 @@ export class TemperatureService {
     return this.httpClient.get(`${this.API_URL}/temperature?limit=` + limit);
   }
 
+  /**
+   * Get certain product with its current temperature
+   * @param id - product id
+   * @returns Observable<any>|null
+   */
   getTempByProductId(id: string): Observable<any> | null {
     if (id === '') {
       return null;
@@ -28,6 +37,11 @@ export class TemperatureService {
     return this.httpClient.get(`${this.API_URL}/temperature/${id}`);
   }
 
+  /**
+   * Get temperature status in string
+   * @param product - ProductTemperatureModel
+   * @returns string
+   */
   showProductTemperatureStatus(product: ProductTemperatureModel): string {
     if (product.temperature < product.minimumTemperature) {
       return 'too low';
