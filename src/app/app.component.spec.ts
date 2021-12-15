@@ -92,6 +92,16 @@ describe('AppComponent', () => {
         ]
       );
     }));
+    it('should render table with data', fakeAsync((): void => {
+      fixture = TestBed.createComponent(AppComponent);
+      app = fixture.componentInstance;
+      app.loadData();
+      tick(5000);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.test-table')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('.test-table').querySelectorAll('tr').length).toBeGreaterThanOrEqual(1);
+      discardPeriodicTasks();
+    }));
   });
 
   describe('#showStatus', () => {
